@@ -3,6 +3,7 @@
   "name": "malachite",
   "main": "worker/index.ts",
   "compatibility_date": "2026-03-19",
+  "workers_dev": false,
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS"
