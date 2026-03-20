@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "malachite",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-03-19",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  }
+}
