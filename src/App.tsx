@@ -40,6 +40,15 @@ export default function App() {
     mouseY.set(y);
   };
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = (touch.clientX - rect.left) / rect.width;
+    const y = (touch.clientY - rect.top) / rect.height;
+    mouseX.set(x);
+    mouseY.set(y);
+  };
+
   const handleMouseLeave = () => {
     mouseX.set(0.5);
     mouseY.set(0.5);
@@ -65,10 +74,13 @@ export default function App() {
       >
         {/* 3D Container */}
         <div 
-          className="w-full max-w-md aspect-[5/6] relative mb-12 cursor-crosshair"
+          className="w-full max-w-md aspect-[5/6] relative mb-12 cursor-crosshair touch-none"
           style={{ perspective: 1200 }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleMouseLeave}
+          onTouchCancel={handleMouseLeave}
         >
           <motion.div 
             className="w-full h-full relative"
@@ -91,6 +103,14 @@ export default function App() {
 
             <svg viewBox="0 0 500 600" className="w-full h-full absolute inset-0" style={{ transform: 'translateZ(0)' }}>
               <defs>
+                {/* Safari/Mobile fixes for blur */}
+                <filter id="blur-16" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
+                  <feGaussianBlur stdDeviation="16" />
+                </filter>
+                <filter id="blur-25" x="-50%" y="-50%" width="200%" height="200%" colorInterpolationFilters="sRGB">
+                  <feGaussianBlur stdDeviation="25" />
+                </filter>
+
                 {/* Procedural Wavy Filter for Malachite Bands */}
                 <filter id="malachite-waves" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
                   {/* Increased octaves for finer detail, dynamic seed */}
@@ -161,13 +181,12 @@ export default function App() {
               <g clipPath="url(#stone-clip)">
                 <g filter="url(#malachite-waves)">
                   <rect x="-100" y="-100" width="700" height="800" fill="url(#malachite-center1)" />
-                  <circle cx="375" cy="210" r="400" fill="url(#malachite-center2)" style={{ mixBlendMode: 'overlay' }} opacity="0.85" />
-                  <circle cx="250" cy="60" r="300" fill="url(#malachite-center3)" style={{ mixBlendMode: 'multiply' }} opacity="0.6" />
+                  <circle cx="375" cy="210" r="400" fill="url(#malachite-center2)" opacity="0.7" />
+                  <circle cx="250" cy="60" r="300" fill="url(#malachite-center3)" opacity="0.5" />
                 </g>
                 
                 {/* 3D Shading / Gloss Overlays */}
-                <rect x="0" y="0" width="500" height="600" fill="url(#gloss)" style={{ mixBlendMode: 'overlay' }} />
-                <rect x="0" y="0" width="500" height="600" fill="url(#gloss)" opacity="0.6" />
+                <rect x="0" y="0" width="500" height="600" fill="url(#gloss)" opacity="0.8" />
 
                 {/* Dynamic Specular Highlight (Moves with Mouse) */}
                 <motion.circle 
@@ -176,8 +195,7 @@ export default function App() {
                   r="140" 
                   fill="white" 
                   opacity="0.45" 
-                  filter="blur(25px)" 
-                  style={{ mixBlendMode: 'screen' }}
+                  filter="url(#blur-25)" 
                 />
               </g>
 
